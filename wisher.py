@@ -131,10 +131,10 @@ def Monitor():
 			sys.stderr.write('\r{}{}'.format(out, ' '*(60-len(out))))
 			time.sleep(1)
 		except KeyboardInterrupt:
-			print '\nInterrupted'
+			print ("\Interrupted")
 			break
 		except Exception as err:
-			print '\nError:', str(err)
+			print ('\nError:'), str(err)
 			break
 			
 
@@ -142,7 +142,7 @@ def AmpFactor(recvd, sent):
 	return '{}x ({}B -> {}B)'.format(recvd/sent, sent, recvd)
 
 def Benchmark(ddos):
-	print BENCHMARK
+	print (BENCHMARK)
 	i = 0
 	for proto in files:
 		f = open(files[proto][FILE_NAME], 'r')
@@ -154,18 +154,15 @@ def Benchmark(ddos):
 						i+= 1
 						recvd, sent = ddos.GetAmpSize(proto, soldier, domain)
 						if recvd/sent:
-							print '{:^8}|{:^15}|{:^23}|{}'.format(proto, soldier, 
-								AmpFactor(recvd, sent), domain)
+							print ("{:^8}|{:^15}|{:^23}|{}".format(proto, soldier, 
+								AmpFactor(recvd, sent), domain))
 						else:
 							continue
 				else:
 					recvd, sent = ddos.GetAmpSize(proto, soldier)
-					print '{:^8}|{:^15}|{:^23}|{}'.format(proto, soldier, 
-						AmpFactor(recvd, sent), 'N/A')
-					i+= 1
-			else:
-				break
-		print 'Total tested:', i
+					print ( "{:^8}|{:^15}|{:^23}|{}" .format(proto, soldier, 
+						AmpFactor(recvd, sent), 'N/A'))
+		print ( "Total tested:", i)
 		f.close()
 
 class DDoS(object):
@@ -292,7 +289,7 @@ def main():
 		if domains:
 			files['dns'] = [dns_file]
 		else:
-			print 'Specify domains to resolve (e.g: --dns=dns.txt:evildomain.com)'
+			print ("Specify domains to resolve (e.g: --dns=dns.txt:evildomain.com)")
 			sys.exit()
 	if options.ntp:
 		files['ntp'] = [options.ntp]
@@ -316,5 +313,5 @@ def main():
 		sys.exit()
 
 if __name__=='__main__':
-	print LOGO
+	print 
 	main()
